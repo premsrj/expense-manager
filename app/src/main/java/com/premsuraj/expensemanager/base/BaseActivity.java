@@ -1,6 +1,7 @@
-package com.premsuraj.expensemanager;
+package com.premsuraj.expensemanager.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,7 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class HomeActivity extends AppCompatActivity
+import com.premsuraj.expensemanager.R;
+
+public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
@@ -76,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
