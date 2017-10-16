@@ -17,15 +17,18 @@ class DatePicker constructor() : DialogFragment(), DatePickerDialog.OnDateSetLis
     }
 
     private lateinit var datePickerListener: (year: Int, month: Int, day: Int) -> Unit
+    private lateinit var date: Date
 
     @SuppressLint("ValidFragment")
-    constructor(datePickerListener: (year: Int, month: Int, day: Int) -> Unit) : this() {
+    constructor(date: Date, datePickerListener: (year: Int, month: Int, day: Int) -> Unit) : this() {
+        this.date = date
         this.datePickerListener = datePickerListener
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current date as the default date in the picker
         val c = Calendar.getInstance()
+        c.time = date
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)

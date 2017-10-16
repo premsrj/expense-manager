@@ -14,15 +14,18 @@ class TimePicker constructor() : DialogFragment(), TimePickerDialog.OnTimeSetLis
     }
 
     private lateinit var timePickerListener: (hourOfDay: Int, minute: Int) -> Unit
+    private lateinit var date: Date
 
     @SuppressLint("ValidFragment")
-    constructor(timePickerListener: (hourOfDay: Int, minute: Int) -> Unit) : this() {
+    constructor(date: Date, timePickerListener: (hourOfDay: Int, minute: Int) -> Unit) : this() {
+        this.date = date
         this.timePickerListener = timePickerListener
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current time as the default values for the picker
         val c = Calendar.getInstance()
+        c.time = date
         val hour = c.get(Calendar.HOUR_OF_DAY)
         val minute = c.get(Calendar.MINUTE)
 
