@@ -18,6 +18,9 @@ import com.premsuraj.expensemanager.R;
 import com.premsuraj.expensemanager.login.GoogleLoginManager;
 import com.premsuraj.expensemanager.navigation.NavigationContainerListener;
 import com.premsuraj.expensemanager.navigation.NavigationManager;
+import com.premsuraj.expensemanager.utils.ObjectSerializer;
+
+import java.io.File;
 
 public class BaseActivity extends AppCompatActivity implements NavigationContainerListener, GoogleLoginManager.LoginListener {
 
@@ -48,7 +51,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationContain
         toggle.syncState();
 
         loginManager = new GoogleLoginManager(this);
-        navigationManager = new NavigationManager(this);
+        navigationManager = new NavigationManager(this, this);
         navigationManager.initNavigationView((NavigationView) findViewById(R.id.nav_view));
     }
 
@@ -111,10 +114,23 @@ public class BaseActivity extends AppCompatActivity implements NavigationContain
     protected void onStart() {
         super.onStart();
         loginManager.addAuthListener();
+        checkLogin();
+    }
+
+
+    private void checkLogin() {
+        GoogleLoginManager.UserDetails details = loginManager.getUserDetails();
+        if (details != null) {
+            navigationManager.userLoggedIn(this, details);
+        } else {
+            navigationManager.userLoggedOut();
+        }
     }
 
     @Override
-    public void loginSucceeded() {
-        navigationManager.userLoggedIn(loginManager.getUserDetails());
+    public void loginSucceeded(GoogleLoginManager.UserDetails userDetails) {
+        navigationManager.userLoggedIn(this, userDetails);
+        String fileName = new File(this.getFilesDir(), "userdetails.dat").getAbsolutePath();
+        new ObjectSerializer().putObject(fileName, userDetails);
     }
 }

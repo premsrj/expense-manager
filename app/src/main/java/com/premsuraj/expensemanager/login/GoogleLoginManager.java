@@ -21,14 +21,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.crash.FirebaseCrash;
 import com.premsuraj.expensemanager.R;
+import com.premsuraj.expensemanager.utils.ObjectSerializer;
+
+import java.io.File;
+import java.io.Serializable;
+
 
 /**
  * Created by Premsuraj
  */
 
 public class GoogleLoginManager {
-    private static final String TAG = "GoogleLogin";
+    public static final String TAG = "GoogleLogin";
     private static final int RC_SIGN_IN = 4531;
+    public GoogleApiClient googleApiClient;
     private UserDetails userDetails;
     private FragmentActivity activity;
     private FirebaseAuth mAuth;
@@ -56,15 +62,17 @@ public class GoogleLoginManager {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("1068454065483-pdrk2523ge3um6oh8jei202em89p1gqd.apps.googleusercontent.com")
                 .build();
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(activity)
-                .enableAutoManage(activity, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Snackbar.make(activity.getWindow().getDecorView(), R.string.google_login_failed, Snackbar.LENGTH_LONG).show();
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(activity)
+                    .enableAutoManage(activity, new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Snackbar.make(activity.getWindow().getDecorView(), R.string.google_login_failed, Snackbar.LENGTH_LONG).show();
+                        }
+                    })
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+        }
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -85,10 +93,11 @@ public class GoogleLoginManager {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
         userDetails = new UserDetails();
         userDetails.userName = acct.getDisplayName();
         userDetails.imageUrl = acct.getPhotoUrl().toString();
+        userDetails.idToken = acct.getIdToken();
+        userDetails.emailId = acct.getEmail();
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
@@ -104,7 +113,7 @@ public class GoogleLoginManager {
                         }
 
                         if (activity instanceof LoginListener) {
-                            ((LoginListener) activity).loginSucceeded();
+                            ((LoginListener) activity).loginSucceeded(userDetails);
                         }
                     }
                 });
@@ -121,15 +130,31 @@ public class GoogleLoginManager {
     }
 
     public UserDetails getUserDetails() {
+        if (userDetails == null) {
+            String fileName = new File(activity.getFilesDir(), "userdetails.dat").getAbsolutePath();
+            userDetails = (GoogleLoginManager.UserDetails) new ObjectSerializer().get(fileName);
+        }
         return userDetails;
     }
 
-    public interface LoginListener {
-        void loginSucceeded();
+    public String getEmailBasedKey() {
+        UserDetails details = getUserDetails();
+        if (details == null) {
+            return null;
+        }
+
+        String key = userDetails.emailId.replace(".", "_");
+        return key;
     }
 
-    public class UserDetails {
-        String userName;
-        String imageUrl;
+    public interface LoginListener {
+        void loginSucceeded(UserDetails userDetails);
+    }
+
+    public static class UserDetails implements Serializable {
+        public String userName;
+        public String imageUrl;
+        public String idToken;
+        public String emailId;
     }
 }
