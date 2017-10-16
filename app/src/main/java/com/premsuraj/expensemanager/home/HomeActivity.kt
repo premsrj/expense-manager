@@ -1,8 +1,6 @@
 package com.premsuraj.expensemanager.home
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.view.Menu
 import android.view.MenuItem
 import com.premsuraj.expensemanager.R
@@ -14,12 +12,6 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_home)
-
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action, ok?", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         super.initBaseViews()
     }
