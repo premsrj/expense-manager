@@ -1,7 +1,6 @@
 package com.premsuraj.expensemanager.base;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,14 +18,8 @@ import java.io.File;
 
 public class BaseActivity extends AppCompatActivity implements NavigationContainerListener, GoogleLoginManager.LoginListener {
 
-    private static final String TAG = "Base";
     public NavigationManager navigationManager;
     GoogleLoginManager loginManager;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     protected void initBaseViews() {
         Toolbar toolbar = findViewById(R.id.toolbar);
