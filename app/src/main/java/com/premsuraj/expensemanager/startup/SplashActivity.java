@@ -1,13 +1,11 @@
-package com.premsuraj.expensemanager;
+package com.premsuraj.expensemanager.startup;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.premsuraj.expensemanager.R;
 import com.premsuraj.expensemanager.base.BaseActivity;
-import com.premsuraj.expensemanager.startup.StartupItem;
-import com.premsuraj.expensemanager.startup.StartupManager;
-import com.premsuraj.expensemanager.startup.StartupManagerCallback;
 
 import java.util.ArrayList;
 
