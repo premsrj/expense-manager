@@ -32,6 +32,7 @@ class AddEditActivity : AppCompatActivity() {
             amount.setText(if (transaction.amount.isEmpty()) "" else transaction.amount.toString())
             payee.setText(transaction.payee)
             description.setText(transaction.description)
+            isincome.isChecked = transaction.isIncome
 
             date.setOnClickListener { _ -> updateDate() }
 

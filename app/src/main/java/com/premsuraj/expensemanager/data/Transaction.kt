@@ -8,4 +8,5 @@ class Transaction {
     var payee = ""
     var categoryId = ""
     var description = ""
+    var isIncome = false
 }
