@@ -2,7 +2,13 @@ package com.premsuraj.expensemanager.addedit
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import com.example.premsuraj.expensemanager.utils.invisible
 import com.example.premsuraj.expensemanager.utils.isEmpty
 import com.example.premsuraj.expensemanager.utils.toDate
@@ -24,7 +30,7 @@ class AddEditActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(AddEditViewModel::class.java)
 
-        var transactionId = intent?.getStringExtra(Constants.Ids.TRANSACTION)
+        val transactionId = intent?.getStringExtra(Constants.Ids.TRANSACTION)
 
         viewModel.loadTransaction(transactionId, { transaction ->
 
@@ -38,6 +44,12 @@ class AddEditActivity : AppCompatActivity() {
 
             progressBar.invisible()
         })
+
+        isincome.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (isChecked) compoundButton.text = "Income" else compoundButton.text = "Expense"
+        }
+
+        amount.addTextChangedListener(CustomTextWatcher())
     }
 
     private fun updateDate() {
@@ -50,5 +62,55 @@ class AddEditActivity : AppCompatActivity() {
             timePicker.show(fragmentManager, "timePicker")
         })
         datePicker.show(fragmentManager, "datePicker")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_addedit, menu)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.action_save)?.isVisible =
+                (amount.text.toString().isEmpty() || amount.text.toString().toFloat().isEmpty())
+                        .not()
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.action_save -> saveEntry()
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun saveEntry(): Boolean {
+        val transaction = viewModel.getTransaction()
+        transaction.date = date.text.toDate()
+        transaction.description = description.text.toString()
+        transaction.payee = payee.text.toString()
+        transaction.amount = amount.text.toString().toFloat()
+        transaction.isIncome = isincome.isChecked
+
+        viewModel.saveTransaction({
+            Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
+            this@AddEditActivity.finish()
+        }, {
+            Snackbar.make(findViewById(android.R.id.content), "Cannot save", Snackbar.LENGTH_LONG).show()
+        })
+        return true
+    }
+
+    internal inner class CustomTextWatcher : TextWatcher {
+
+        override fun afterTextChanged(p0: Editable?) {
+            this@AddEditActivity.invalidateOptionsMenu()
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
     }
 }
