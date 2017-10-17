@@ -32,6 +32,10 @@ fun Float.toFormattedString(): String {
     return String.format("%.2f", this)
 }
 
+fun Float.isEmpty(): Boolean {
+    return this == 0.0f
+}
+
 fun Editable.isValidNumber(): Boolean {
     try {
         val number = this.toString().toFloat()
