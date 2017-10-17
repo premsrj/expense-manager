@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.premsuraj.expensemanager.Constants
 import com.premsuraj.expensemanager.R
 import com.premsuraj.expensemanager.addedit.AddEditActivity
 
@@ -22,7 +21,7 @@ class HomeActivityFragment : Fragment() {
 
         var fab = inflatedView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { _ ->
             val intent = Intent(activity, AddEditActivity::class.java)
-            intent.putExtra(Constants.Ids.TRANSACTION, "DPRvxloogNzE3E22ujhP")
+//            intent.putExtra(Constants.Ids.TRANSACTION, "DPRvxloogNzE3E22ujhP")
             startActivity(intent)
         }
         return inflatedView
