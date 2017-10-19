@@ -13,9 +13,9 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class CategoryViewModel constructor(application: Application) : AndroidViewModel(application) {
-    val categories = ArrayList<CategoryListItem>()
+    val categories = ArrayList<Category>()
 
-    fun getAllCategories(onFetched: (List<CategoryListItem>) -> Unit, onFailed: () -> Unit) {
+    fun getAllCategories(onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
         if (categories.size != 0) {
             onFetched.invoke(categories)
             return
@@ -24,7 +24,7 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
         refreshCategories(onFetched, onFailed)
     }
 
-    private fun refreshCategories(onFetched: (List<CategoryListItem>) -> Unit, onFailed: () -> Unit) {
+    private fun refreshCategories(onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
         getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.CATEGORIES)
                 .get()
                 .addOnCompleteListener({ task: Task<QuerySnapshot> ->
@@ -36,18 +36,18 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
                 })
     }
 
-    private fun processData(result: QuerySnapshot?, onFetched: (List<CategoryListItem>) -> Unit, onFailed: () -> Unit) {
+    private fun processData(result: QuerySnapshot?, onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
         doAsync {
             try {
-                val parentCategories = ArrayList<CategoryListItem>()
-                val childCategories = ArrayList<CategoryListItem>()
+                val parentCategories = ArrayList<Category>()
+                val childCategories = ArrayList<Category>()
 
                 for (snapshot: DocumentSnapshot in result!!) {
                     val category: Category = snapshot.toObject(Category::class.java)
                     if (category.parentId.isBlank())
-                        parentCategories.add(CategoryListItem(snapshot.id, category.name, ""))
+                        parentCategories.add(Category(snapshot.id, category.name, ""))
                     else
-                        childCategories.add(CategoryListItem(snapshot.id, category.name, category.parentId))
+                        childCategories.add(Category(snapshot.id, category.name, category.parentId))
                 }
 
                 parentCategories.sortBy { categoryListItem -> categoryListItem.name }

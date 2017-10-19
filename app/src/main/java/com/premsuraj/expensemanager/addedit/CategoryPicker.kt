@@ -21,7 +21,7 @@ class CategoryPicker : AppCompatActivity() {
         setContentView(R.layout.activity_category_picker)
         setSupportActionBar(toolbar)
 
-        val progress = indeterminateProgressDialog("")
+        val progress = indeterminateProgressDialog("Fetching Categories")
         progress.show()
 
         categoryList.setHasFixedSize(true)

@@ -7,9 +7,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import com.premsuraj.expensemanager.R
+import com.premsuraj.expensemanager.data.Category
 import org.jetbrains.anko.dimen
 
-class CategoryAdapter(private val context: Context, private val entries: List<CategoryListItem>)
+class CategoryAdapter(private val context: Context, private val entries: List<Category>)
     : RecyclerView.Adapter<CategoryViewHolder>() {
 
     override fun onBindViewHolder(holder: CategoryViewHolder?, position: Int) {
