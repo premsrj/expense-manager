@@ -5,7 +5,8 @@ public abstract class Constants {
         public static final String TRANSACTION = "transaction_id";
     }
 
-    public abstract class References {
+    public abstract class DbReferences {
         public static final String TRANSACTIONS = "transactions";
+        public static final String CATEGORIES = "categories";
     }
 }

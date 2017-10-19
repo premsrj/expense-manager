@@ -1,6 +1,7 @@
 package com.premsuraj.expensemanager.addedit
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -41,6 +42,10 @@ class AddEditActivity : AppCompatActivity() {
             isincome.isChecked = transaction.isIncome
 
             date.setOnClickListener { _ -> updateDate() }
+            category.setOnClickListener { _ ->
+                val intent = Intent(this@AddEditActivity, CategoryPicker::class.java)
+                startActivityForResult(intent, 101)
+            }
 
             progressBar.invisible()
         })

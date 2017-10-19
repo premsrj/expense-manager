@@ -20,7 +20,7 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
             return
         }
 
-        documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.References.TRANSACTIONS)
+        documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS)
                 .document(id)
         if (documentRef == null) {
             onLoaded.invoke(transactionData)
@@ -47,7 +47,7 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
 
     fun saveTransaction(onSaved: () -> Unit, onFailed: () -> Unit) {
         if (documentRef == null) {
-            documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.References.TRANSACTIONS).document()
+            documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS).document()
         }
 
         documentRef?.set(transactionData)?.addOnSuccessListener { void ->

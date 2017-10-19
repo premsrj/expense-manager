@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import com.premsuraj.expensemanager.R
 import kotlinx.android.synthetic.main.activity_category_picker.*
 import kotlinx.android.synthetic.main.content_category_picker.*
+import org.jetbrains.anko.indeterminateProgressDialog
 
 
 class CategoryPicker : AppCompatActivity() {
@@ -20,6 +21,9 @@ class CategoryPicker : AppCompatActivity() {
         setContentView(R.layout.activity_category_picker)
         setSupportActionBar(toolbar)
 
+        val progress = indeterminateProgressDialog("")
+        progress.show()
+
         categoryList.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this)
         categoryList.layoutManager = layoutManager
@@ -28,8 +32,10 @@ class CategoryPicker : AppCompatActivity() {
 
         viewModel.getAllCategories({ list ->
             categoryList.adapter = CategoryAdapter(this@CategoryPicker, list)
+            progress.dismiss()
         }, {
             Snackbar.make(viewContainer, "Failed to fetch categories", Snackbar.LENGTH_LONG).show()
+            progress.dismiss()
         })
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

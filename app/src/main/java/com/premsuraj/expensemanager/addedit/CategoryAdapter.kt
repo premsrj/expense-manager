@@ -12,7 +12,7 @@ class CategoryAdapter(private val context: Context, private val entries: List<Ca
     }
 
     override fun getItemCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return entries.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CategoryViewHolder {
