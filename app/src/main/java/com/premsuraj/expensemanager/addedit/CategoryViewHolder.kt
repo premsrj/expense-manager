@@ -4,4 +4,4 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-class CategoryViewHolder(private val context: Context, view: View) : RecyclerView.ViewHolder(view)
+class CategoryViewHolder(private val context: Context, val view: View) : RecyclerView.ViewHolder(view)
