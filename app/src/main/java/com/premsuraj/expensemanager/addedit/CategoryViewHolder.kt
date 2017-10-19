@@ -1,7 +1,15 @@
 package com.premsuraj.expensemanager.addedit
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.premsuraj.expensemanager.data.Category
 
-class CategoryViewHolder(private val context: Context, val view: View) : RecyclerView.ViewHolder(view)
+class CategoryViewHolder(var onClicked: (category: Category) -> Unit, val view: View) : RecyclerView.ViewHolder(view) {
+    var category: Category = Category("", "", "")
+
+    init {
+        view.setOnClickListener {
+            onClicked.invoke(category)
+        }
+    }
+}

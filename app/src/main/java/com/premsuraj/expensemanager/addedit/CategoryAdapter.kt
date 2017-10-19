@@ -10,11 +10,13 @@ import com.premsuraj.expensemanager.R
 import com.premsuraj.expensemanager.data.Category
 import org.jetbrains.anko.dimen
 
-class CategoryAdapter(private val context: Context, private val entries: List<Category>)
+class CategoryAdapter(private val context: Context, private val entries: List<Category>,
+                      private val onItemClicked: (category: Category) -> Unit)
     : RecyclerView.Adapter<CategoryViewHolder>() {
 
     override fun onBindViewHolder(holder: CategoryViewHolder?, position: Int) {
         (holder?.view as TextView).text = entries[position].name
+        holder.category = entries[position]
     }
 
     override fun getItemCount(): Int {
@@ -28,7 +30,10 @@ class CategoryAdapter(private val context: Context, private val entries: List<Ca
         params.leftMargin = padding
         view.layoutParams = params
         if (viewType == 1) (view as TextView).setTypeface(view.typeface, Typeface.BOLD)
-        return CategoryViewHolder(context, view)
+
+        val viewHolder = CategoryViewHolder({}, view)
+        viewHolder.onClicked = onItemClicked
+        return viewHolder
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -1,12 +1,15 @@
 package com.premsuraj.expensemanager.addedit
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.premsuraj.expensemanager.Constants
 import com.premsuraj.expensemanager.R
+import com.premsuraj.expensemanager.data.Category
 import kotlinx.android.synthetic.main.activity_category_picker.*
 import kotlinx.android.synthetic.main.content_category_picker.*
 import org.jetbrains.anko.indeterminateProgressDialog
@@ -31,13 +34,24 @@ class CategoryPicker : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(CategoryViewModel::class.java)
 
         viewModel.getAllCategories({ list ->
-            categoryList.adapter = CategoryAdapter(this@CategoryPicker, list)
+            categoryList.adapter = CategoryAdapter(this@CategoryPicker, list, { category ->
+                onCategoryClicked(category)
+            })
             progress.dismiss()
         }, {
             Snackbar.make(viewContainer, "Failed to fetch categories", Snackbar.LENGTH_LONG).show()
             progress.dismiss()
         })
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    fun onCategoryClicked(category: Category) {
+        val intent = Intent()
+        intent.putExtra(Constants.KEYS.CATEGORY_NAME, category.name)
+        intent.putExtra(Constants.KEYS.CATEGORY_ID, category.id)
+        intent.putExtra(Constants.KEYS.PARENT_ID, category.parentId)
+        setResult(101, intent)
+        finish()
     }
 
 }

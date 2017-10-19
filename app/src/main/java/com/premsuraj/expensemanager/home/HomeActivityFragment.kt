@@ -21,7 +21,7 @@ class HomeActivityFragment : Fragment() {
 
         var fab = inflatedView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { _ ->
             val intent = Intent(activity, AddEditActivity::class.java)
-//            intent.putExtra(Constants.Ids.TRANSACTION, "DPRvxloogNzE3E22ujhP")
+//            intent.putExtra(Constants.KEYS.TRANSACTION, "DPRvxloogNzE3E22ujhP")
             startActivity(intent)
         }
         return inflatedView

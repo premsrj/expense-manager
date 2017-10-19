@@ -6,7 +6,7 @@ class Transaction {
     var date = Date()
     var amount = 0.0f
     var payee = ""
-    var categoryId = ""
+    var categoryId = "0"
     var description = ""
     var isIncome = false
 }

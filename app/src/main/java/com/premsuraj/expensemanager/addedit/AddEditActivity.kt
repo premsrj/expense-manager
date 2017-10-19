@@ -16,6 +16,7 @@ import com.example.premsuraj.expensemanager.utils.toDate
 import com.example.premsuraj.expensemanager.utils.toFormattedString
 import com.premsuraj.expensemanager.Constants
 import com.premsuraj.expensemanager.R
+import com.premsuraj.expensemanager.data.Transaction
 import com.premsuraj.expensemanager.utils.DatePicker
 import com.premsuraj.expensemanager.utils.TimePicker
 import kotlinx.android.synthetic.main.activity_add_edit.*
@@ -23,6 +24,9 @@ import java.util.*
 
 class AddEditActivity : AppCompatActivity() {
     lateinit var viewModel: AddEditViewModel
+    var categoryId = "0"
+    var categoryName = "Other"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +35,11 @@ class AddEditActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(AddEditViewModel::class.java)
 
-        val transactionId = intent?.getStringExtra(Constants.Ids.TRANSACTION)
+        val transactionId = intent?.getStringExtra(Constants.KEYS.TRANSACTION)
 
         viewModel.loadTransaction(transactionId, { transaction ->
 
-            date.text = transaction.date.toFormattedString()
-            amount.setText(if (transaction.amount.isEmpty()) "" else transaction.amount.toString())
-            payee.setText(transaction.payee)
-            description.setText(transaction.description)
-            isincome.isChecked = transaction.isIncome
+            refreshViewData(transaction)
 
             date.setOnClickListener { _ -> updateDate() }
             category.setOnClickListener { _ ->
@@ -55,6 +55,20 @@ class AddEditActivity : AppCompatActivity() {
         }
 
         amount.addTextChangedListener(CustomTextWatcher())
+    }
+
+    private fun refreshViewData(transaction: Transaction) {
+        date.text = transaction.date.toFormattedString()
+        amount.setText(if (transaction.amount.isEmpty()) "" else transaction.amount.toString())
+        payee.setText(transaction.payee)
+        description.setText(transaction.description)
+        isincome.isChecked = transaction.isIncome
+        category.text = categoryName
+    }
+
+    override fun onPause() {
+        updateTransactionDataFromView()
+        super.onPause()
     }
 
     private fun updateDate() {
@@ -89,12 +103,7 @@ class AddEditActivity : AppCompatActivity() {
     }
 
     private fun saveEntry(): Boolean {
-        val transaction = viewModel.getTransaction()
-        transaction.date = date.text.toDate()
-        transaction.description = description.text.toString()
-        transaction.payee = payee.text.toString()
-        transaction.amount = amount.text.toString().toFloat()
-        transaction.isIncome = isincome.isChecked
+        updateTransactionDataFromView()
 
         viewModel.saveTransaction({
             Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
@@ -103,6 +112,25 @@ class AddEditActivity : AppCompatActivity() {
             Snackbar.make(findViewById(android.R.id.content), "Cannot save", Snackbar.LENGTH_LONG).show()
         })
         return true
+    }
+
+    private fun updateTransactionDataFromView() {
+        val transaction = viewModel.getTransaction()
+        transaction.date = date.text.toDate()
+        transaction.description = description.text.toString()
+        transaction.payee = payee.text.toString()
+        transaction.amount = if (amount.text.isNotBlank()) amount.text.toString().toFloat() else 0f
+        transaction.isIncome = isincome.isChecked
+        transaction.categoryId = categoryId
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null)
+            return
+        categoryId = data.getStringExtra(Constants.KEYS.CATEGORY_ID)
+        categoryName = data.getStringExtra(Constants.KEYS.CATEGORY_NAME)
+        viewModel.getTransaction().categoryId = categoryId
+        refreshViewData(viewModel.getTransaction())
     }
 
     internal inner class CustomTextWatcher : TextWatcher {
@@ -116,6 +144,5 @@ class AddEditActivity : AppCompatActivity() {
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         }
-
     }
 }
