@@ -7,6 +7,7 @@ class Transaction {
     var amount = 0.0f
     var payee = ""
     var categoryId = "0"
+    var categoryName = "Other"
     var description = ""
     var isIncome = false
 }

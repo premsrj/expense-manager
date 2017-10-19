@@ -69,4 +69,24 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
             }
         }
     }
+
+    fun getFullyQualifiedName(category: Category, onFetched: (name: String) -> Unit) {
+        if (category.parentId.isBlank()) {
+            onFetched.invoke(category.name)
+            return
+        }
+        getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.CATEGORIES)
+                .document(category.parentId).get().addOnSuccessListener { documentSnapshot ->
+            try {
+                val parentCategory = documentSnapshot.toObject(Category::class.java)
+                onFetched.invoke(parentCategory.name + ":" + category.name)
+            } catch (ex: Exception) {
+                FirebaseCrash.report(ex)
+                onFetched.invoke(category.name)
+            }
+        }.addOnFailureListener { exception ->
+            FirebaseCrash.report(exception)
+            onFetched.invoke(category.name)
+        }
+    }
 }

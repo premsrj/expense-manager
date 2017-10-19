@@ -10,10 +10,7 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.example.premsuraj.expensemanager.utils.invisible
-import com.example.premsuraj.expensemanager.utils.isEmpty
-import com.example.premsuraj.expensemanager.utils.toDate
-import com.example.premsuraj.expensemanager.utils.toFormattedString
+import com.example.premsuraj.expensemanager.utils.*
 import com.premsuraj.expensemanager.Constants
 import com.premsuraj.expensemanager.R
 import com.premsuraj.expensemanager.data.Transaction
@@ -24,8 +21,6 @@ import java.util.*
 
 class AddEditActivity : AppCompatActivity() {
     lateinit var viewModel: AddEditViewModel
-    var categoryId = "0"
-    var categoryName = "Other"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +58,7 @@ class AddEditActivity : AppCompatActivity() {
         payee.setText(transaction.payee)
         description.setText(transaction.description)
         isincome.isChecked = transaction.isIncome
-        category.text = categoryName
+        category.text = transaction.categoryName
     }
 
     override fun onPause() {
@@ -103,13 +98,16 @@ class AddEditActivity : AppCompatActivity() {
     }
 
     private fun saveEntry(): Boolean {
+        progressBar.visible()
         updateTransactionDataFromView()
 
         viewModel.saveTransaction({
             Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
             this@AddEditActivity.finish()
+            progressBar.invisible()
         }, {
             Snackbar.make(findViewById(android.R.id.content), "Cannot save", Snackbar.LENGTH_LONG).show()
+            progressBar.invisible()
         })
         return true
     }
@@ -121,15 +119,15 @@ class AddEditActivity : AppCompatActivity() {
         transaction.payee = payee.text.toString()
         transaction.amount = if (amount.text.isNotBlank()) amount.text.toString().toFloat() else 0f
         transaction.isIncome = isincome.isChecked
-        transaction.categoryId = categoryId
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null)
             return
-        categoryId = data.getStringExtra(Constants.KEYS.CATEGORY_ID)
-        categoryName = data.getStringExtra(Constants.KEYS.CATEGORY_NAME)
+        val categoryId = data.getStringExtra(Constants.KEYS.CATEGORY_ID)
+        val categoryName = data.getStringExtra(Constants.KEYS.CATEGORY_NAME)
         viewModel.getTransaction().categoryId = categoryId
+        viewModel.getTransaction().categoryName = categoryName
         refreshViewData(viewModel.getTransaction())
     }
 

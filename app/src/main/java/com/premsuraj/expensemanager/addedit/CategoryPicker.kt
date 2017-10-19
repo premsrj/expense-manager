@@ -46,12 +46,17 @@ class CategoryPicker : AppCompatActivity() {
     }
 
     fun onCategoryClicked(category: Category) {
-        val intent = Intent()
-        intent.putExtra(Constants.KEYS.CATEGORY_NAME, category.name)
-        intent.putExtra(Constants.KEYS.CATEGORY_ID, category.id)
-        intent.putExtra(Constants.KEYS.PARENT_ID, category.parentId)
-        setResult(101, intent)
-        finish()
+        val progress = indeterminateProgressDialog("Wait...")
+        progress.show()
+        viewModel.getFullyQualifiedName(category, { name ->
+            progress.dismiss()
+            val intent = Intent()
+            intent.putExtra(Constants.KEYS.CATEGORY_NAME, name)
+            intent.putExtra(Constants.KEYS.CATEGORY_ID, category.id)
+            intent.putExtra(Constants.KEYS.PARENT_ID, category.parentId)
+            setResult(101, intent)
+            finish()
+        })
     }
 
 }
