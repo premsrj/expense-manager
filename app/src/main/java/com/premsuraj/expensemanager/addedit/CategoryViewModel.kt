@@ -16,6 +16,15 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
     val categories = ArrayList<CategoryListItem>()
 
     fun getAllCategories(onFetched: (List<CategoryListItem>) -> Unit, onFailed: () -> Unit) {
+        if (categories.size != 0) {
+            onFetched.invoke(categories)
+            return
+        }
+
+        refreshCategories(onFetched, onFailed)
+    }
+
+    private fun refreshCategories(onFetched: (List<CategoryListItem>) -> Unit, onFailed: () -> Unit) {
         getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.CATEGORIES)
                 .get()
                 .addOnCompleteListener({ task: Task<QuerySnapshot> ->
