@@ -1,5 +1,6 @@
 package com.premsuraj.expensemanager.data
 
 class Category {
-    var name = "Other"
+    var name = ""
+    var childCategories: ArrayList<Category> = ArrayList()
 }
