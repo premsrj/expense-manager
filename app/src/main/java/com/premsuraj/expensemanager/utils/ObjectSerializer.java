@@ -1,5 +1,6 @@
 package com.premsuraj.expensemanager.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -11,6 +12,14 @@ import java.io.ObjectOutputStream;
 public class ObjectSerializer {
 
     public ObjectSerializer() {
+    }
+
+    public static String getDocumentPath(Context context, String filename) {
+        return context.getFilesDir().getAbsolutePath() + "/" + filename;
+    }
+
+    public static String getCachePath(Context context, String filename) {
+        return context.getCacheDir().getAbsolutePath() + "/" + filename;
     }
 
     public void putObject(String dumpFile, Object object) {
