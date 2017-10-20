@@ -1,6 +1,10 @@
 package com.premsuraj.expensemanager;
 
 public abstract class Constants {
+    public abstract class REALM {
+        public static final String AUTH_URL = "http://" + "35.186.184.200" + ":9080/auth";
+        public static final String REALM_URL = "realm://" + "35.186.184.200" + ":9080/~/expenses";
+    }
     public abstract class KEYS {
         public static final String TRANSACTION = "transaction_id";
         public static final String CATEGORY_ID = "category_id";

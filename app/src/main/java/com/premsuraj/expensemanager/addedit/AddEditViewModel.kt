@@ -58,4 +58,7 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
         }
     }
 
+    fun fetchPayees(onFetched: () -> Unit) {
+//        getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS).
+    }
 }

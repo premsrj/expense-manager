@@ -1,8 +1,9 @@
 package com.premsuraj.expensemanager.data
 
+import io.realm.RealmObject
 import java.util.*
 
-class Transaction {
+open class Transaction : RealmObject() {
     var date = Date()
     var amount = 0.0f
     var payee = ""

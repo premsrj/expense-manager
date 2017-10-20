@@ -11,7 +11,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        StartupManager().start { passedItems, failedItems ->
+        StartupManager().addStartupItems(RealmStartup()).start { passedItems, failedItems ->
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
