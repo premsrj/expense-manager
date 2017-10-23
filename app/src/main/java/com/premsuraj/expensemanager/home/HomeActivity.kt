@@ -1,10 +1,13 @@
 package com.premsuraj.expensemanager.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.premsuraj.expensemanager.R
+import com.premsuraj.expensemanager.addedit.AddEditActivity
 import com.premsuraj.expensemanager.base.BaseActivity
+import kotlinx.android.synthetic.main.app_bar_home.*
 
 class HomeActivity : BaseActivity() {
 
@@ -13,6 +16,11 @@ class HomeActivity : BaseActivity() {
 
         setContentView(R.layout.activity_home)
 
+        fab.setOnClickListener { _ ->
+            val intent = Intent(this, AddEditActivity::class.java)
+//            intent.putExtra(Constants.KEYS.TRANSACTION, "1126777296")
+            startActivity(intent)
+        }
         super.initBaseViews()
     }
 
