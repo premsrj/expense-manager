@@ -37,6 +37,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.premsuraj.expensemanager.addedit.AddEditActivity" />
         </activity>
+        <activity
+            android:name=".accounts.AccountsActivity"
+            android:label="@string/title_activity_accounts"
+            android:parentActivityName=".home.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.premsuraj.expensemanager.home.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

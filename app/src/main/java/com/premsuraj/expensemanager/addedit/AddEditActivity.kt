@@ -60,7 +60,7 @@ class AddEditActivity : AppCompatActivity() {
 
     private fun refreshViewData(transaction: Transaction) {
         date.text = transaction.date.toFormattedString()
-        amount.setText(if (transaction.amount.isEmpty()) "" else transaction.amount.toString())
+        amount.setText(if (transaction.amount.isBlank()) "" else transaction.amount.toString())
         payee.setText(transaction.payee)
         description.setText(transaction.description)
         isincome.isChecked = transaction.isIncome
@@ -86,7 +86,7 @@ class AddEditActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.action_save)?.isVisible =
-                (amount.text.toString().isEmpty() || amount.text.toString().toFloat().isEmpty())
+                (amount.text.toString().isEmpty() || amount.text.toString().toFloat().isBlank())
                         .not()
         return true
     }

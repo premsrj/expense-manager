@@ -2,6 +2,7 @@ package com.premsuraj.expensemanager.navigation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.premsuraj.expensemanager.R;
+import com.premsuraj.expensemanager.accounts.AccountsActivity;
 import com.premsuraj.expensemanager.login.GoogleLoginManager;
 
 /**
@@ -55,8 +57,10 @@ public class NavigationManager
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.accountsList) {
+            item.setChecked(false);
+            Intent intent = new Intent(currentActivity, AccountsActivity.class);
+            currentActivity.startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

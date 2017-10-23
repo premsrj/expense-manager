@@ -18,6 +18,8 @@ open class Transaction : RealmObject() {
     var categoryName = "Other"
     var description = ""
     var isIncome = false
+    @Index
+    var accountId = ""
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

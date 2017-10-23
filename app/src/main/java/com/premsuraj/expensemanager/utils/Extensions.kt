@@ -32,7 +32,7 @@ fun Float.toFormattedString(): String {
     return String.format("%.2f", this)
 }
 
-fun Float.isEmpty(): Boolean {
+fun Float.isBlank(): Boolean {
     return this == 0.0f
 }
 
