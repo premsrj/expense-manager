@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.premsuraj.expensemanager.utils.*
 import com.premsuraj.expensemanager.Constants
@@ -50,6 +51,11 @@ class AddEditActivity : AppCompatActivity() {
         }
 
         amount.addTextChangedListener(CustomTextWatcher())
+        viewModel.fetchPayees { payees ->
+            payee.threshold = 1
+            payee.setAdapter(ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+                    payees))
+        }
     }
 
     private fun refreshViewData(transaction: Transaction) {
@@ -99,16 +105,23 @@ class AddEditActivity : AppCompatActivity() {
 
     private fun saveTransaction() {
         progressBar.visible()
-        viewModel.updateTransaction(date.text.toDate(), description.text.toString(), payee.text.toString(),
+        val result = viewModel.updateTransaction(date.text.toDate(), description.text.toString(),
+                payee.text.toString(),
                 if (amount.text.isNotBlank()) amount.text.toString().toFloat() else 0f,
-                isincome.isChecked, categoryId, category.text.toString(), {
-            Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
-            this@AddEditActivity.finish()
-            progressBar.invisible()
-        }, {
+                isincome.isChecked, categoryId, category.text.toString())
+        if (result) {
+            viewModel.saveTransaction({
+                Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
+                this@AddEditActivity.finish()
+                progressBar.invisible()
+            }, {
+                Toast.makeText(this@AddEditActivity, "Cannot save", Toast.LENGTH_LONG).show()
+                progressBar.invisible()
+            })
+        } else {
             Toast.makeText(this@AddEditActivity, "Cannot save", Toast.LENGTH_LONG).show()
             progressBar.invisible()
-        })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

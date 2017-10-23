@@ -2,11 +2,13 @@ package com.premsuraj.expensemanager.addedit
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
+import android.util.Log
 import com.google.firebase.crash.FirebaseCrash
 import com.premsuraj.expensemanager.data.Transaction
 import io.realm.Realm
 import java.lang.Exception
 import java.util.*
+import java.util.stream.Collectors
 
 class AddEditViewModel constructor(application: Application) : AndroidViewModel(application) {
 
@@ -48,8 +50,12 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
         }
     }
 
-    fun fetchPayees(onFetched: () -> Unit) {
-//        getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS).
+    fun fetchPayees(onFetched: (List<String>) -> Unit) {
+        val transactions = Realm.getDefaultInstance().where(Transaction::class.java)
+                .distinct("payee")
+        val payees = transactions.stream().map(Transaction::payee).collect(Collectors.toList())
+        Log.v("Test", payees.toString())
+        onFetched.invoke(payees)
     }
 
     fun setCategory(categoryId: String, categoryName: String) {
@@ -61,22 +67,21 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
     }
 
     fun updateTransaction(date: Date, description: String, payee: String, amount: Float, isIncome: Boolean,
-                          categoryId: String, categoryName: String, onSaved: () -> Unit,
-                          onFailed: () -> Unit) {
-        Realm.getDefaultInstance().executeTransaction { realm ->
-            try {
-                transactionData.date = date
-                transactionData.description = description
-                transactionData.payee = payee
-                transactionData.amount = amount
-                transactionData.isIncome = isIncome
-                transactionData.categoryId = categoryId
-                transactionData.categoryName = categoryName
-                onSaved.invoke()
-            } catch (ex: Exception) {
-                FirebaseCrash.report(ex)
-                onFailed.invoke()
-            }
+                          categoryId: String, categoryName: String): Boolean {
+        try {
+            Realm.getDefaultInstance().beginTransaction()
+            transactionData.date = date
+            transactionData.description = description
+            transactionData.payee = payee
+            transactionData.amount = amount
+            transactionData.isIncome = isIncome
+            transactionData.categoryId = categoryId
+            transactionData.categoryName = categoryName
+            Realm.getDefaultInstance().commitTransaction()
+            return true
+        } catch (ex: Exception) {
+            FirebaseCrash.report(ex)
+            return false
         }
     }
 }
