@@ -3,7 +3,6 @@ package com.premsuraj.expensemanager.addedit
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,6 +20,7 @@ import java.util.*
 
 class AddEditActivity : AppCompatActivity() {
     lateinit var viewModel: AddEditViewModel
+    var categoryId = "0"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,11 +61,6 @@ class AddEditActivity : AppCompatActivity() {
         category.text = transaction.categoryName
     }
 
-    override fun onPause() {
-        updateTransactionDataFromView()
-        super.onPause()
-    }
-
     private fun updateDate() {
         val datePicker = DatePicker(date.text.toDate(), datePickerListener = { year: Int, month: Int, day: Int ->
             val timePicker = TimePicker(date.text.toDate(), timePickerListener = { hourOfDay, minute ->
@@ -98,37 +93,29 @@ class AddEditActivity : AppCompatActivity() {
     }
 
     private fun saveEntry(): Boolean {
-        progressBar.visible()
-        updateTransactionDataFromView()
+        saveTransaction()
+        return true
+    }
 
-        viewModel.saveTransaction({
+    private fun saveTransaction() {
+        progressBar.visible()
+        viewModel.updateTransaction(date.text.toDate(), description.text.toString(), payee.text.toString(),
+                if (amount.text.isNotBlank()) amount.text.toString().toFloat() else 0f,
+                isincome.isChecked, categoryId, category.text.toString(), {
             Toast.makeText(this@AddEditActivity, "Saved", Toast.LENGTH_SHORT).show()
             this@AddEditActivity.finish()
             progressBar.invisible()
         }, {
-            Snackbar.make(findViewById(android.R.id.content), "Cannot save", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(this@AddEditActivity, "Cannot save", Toast.LENGTH_LONG).show()
             progressBar.invisible()
         })
-        return true
-    }
-
-    private fun updateTransactionDataFromView() {
-        val transaction = viewModel.getTransaction()
-        transaction.date = date.text.toDate()
-        transaction.description = description.text.toString()
-        transaction.payee = payee.text.toString()
-        transaction.amount = if (amount.text.isNotBlank()) amount.text.toString().toFloat() else 0f
-        transaction.isIncome = isincome.isChecked
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data == null)
             return
-        val categoryId = data.getStringExtra(Constants.KEYS.CATEGORY_ID)
-        val categoryName = data.getStringExtra(Constants.KEYS.CATEGORY_NAME)
-        viewModel.getTransaction().categoryId = categoryId
-        viewModel.getTransaction().categoryName = categoryName
-        refreshViewData(viewModel.getTransaction())
+        categoryId = data.getStringExtra(Constants.KEYS.CATEGORY_ID)
+        category.text = data.getStringExtra(Constants.KEYS.CATEGORY_NAME)
     }
 
     internal inner class CustomTextWatcher : TextWatcher {

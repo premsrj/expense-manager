@@ -13,29 +13,6 @@ class HomeActivity : BaseActivity() {
 
         setContentView(R.layout.activity_home)
 
-//        realm.executeTransaction { realm ->
-//            val other = Category("", "Other", "")
-//            other.id = "" + other.hashCode()
-//
-//            val sana = Category("", "Sana", "")
-//            sana.id = "" + sana.hashCode()
-//            val sanaFood = Category("", "Food", sana.id)
-//            sanaFood.id = "" + sanaFood.hashCode()
-//            val sanaSchool = Category("", "School", sana.id)
-//            sanaSchool.id = "" + sanaSchool.hashCode()
-//
-//            val vedhika = Category("", "Vedhika", "")
-//            vedhika.id = "" + vedhika.hashCode()
-//            val government = Category("", "Government", vedhika.id)
-//            government.id = "" + government.hashCode()
-//            val loan = Category("", "Loan", vedhika.id)
-//            loan.id = "" + loan.hashCode()
-//            val electrical = Category("", "Electrical", vedhika.id)
-//            electrical.id = "" + electrical.hashCode()
-//
-//            realm.insertOrUpdate(listOf(other, sana, sanaFood, sanaSchool, vedhika, government, loan, electrical))
-//        }
-
         super.initBaseViews()
     }
 

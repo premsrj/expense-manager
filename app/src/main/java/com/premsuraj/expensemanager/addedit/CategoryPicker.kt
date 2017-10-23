@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.MenuItem
 import com.premsuraj.expensemanager.Constants
 import com.premsuraj.expensemanager.R
 import com.premsuraj.expensemanager.data.Category
@@ -55,8 +56,20 @@ class CategoryPicker : AppCompatActivity() {
             intent.putExtra(Constants.KEYS.CATEGORY_ID, category.id)
             intent.putExtra(Constants.KEYS.PARENT_ID, category.parentId)
             setResult(101, intent)
-            finish()
+            this@CategoryPicker.finish()
         })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
 }

@@ -1,9 +1,14 @@
 package com.premsuraj.expensemanager.data
 
 import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 import java.util.*
 
 open class Transaction : RealmObject() {
+    @PrimaryKey
+    @Required
+    var id = ""
     var date = Date()
     var amount = 0.0f
     var payee = ""

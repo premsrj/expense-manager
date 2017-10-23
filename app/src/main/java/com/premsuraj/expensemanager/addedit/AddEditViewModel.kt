@@ -3,16 +3,14 @@ package com.premsuraj.expensemanager.addedit
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.firestore.DocumentReference
-import com.premsuraj.expensemanager.Constants
-import com.premsuraj.expensemanager.MyApplication
 import com.premsuraj.expensemanager.data.Transaction
+import io.realm.Realm
 import java.lang.Exception
+import java.util.*
 
 class AddEditViewModel constructor(application: Application) : AndroidViewModel(application) {
 
     private var transactionData: Transaction = Transaction()
-    private var documentRef: DocumentReference? = null
 
     fun loadTransaction(id: String?, onLoaded: (Transaction) -> Unit) {
         if (id == null || id.isBlank()) {
@@ -20,23 +18,13 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
             return
         }
 
-        documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS)
-                .document(id)
-        if (documentRef == null) {
+        try {
+            val realm = Realm.getDefaultInstance()
+            transactionData = realm.where(Transaction::class.java)
+                    .equalTo("id", id).findFirst()!!
             onLoaded.invoke(transactionData)
-            return
-        }
-
-        documentRef?.get()?.addOnSuccessListener { documentSnapshot ->
-            try {
-                transactionData = documentSnapshot.toObject(Transaction::class.java)
-            } catch (ex: Exception) {
-                FirebaseCrash.report(ex)
-                transactionData = Transaction()
-            }
-            onLoaded.invoke(transactionData)
-        }?.addOnFailureListener { exception ->
-            FirebaseCrash.report(exception)
+        } catch (ex: Exception) {
+            transactionData = Transaction()
             onLoaded.invoke(transactionData)
         }
     }
@@ -46,19 +34,49 @@ class AddEditViewModel constructor(application: Application) : AndroidViewModel(
     }
 
     fun saveTransaction(onSaved: () -> Unit, onFailed: () -> Unit) {
-        if (documentRef == null) {
-            documentRef = getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS).document()
-        }
-
-        documentRef?.set(transactionData)?.addOnSuccessListener { void ->
-            onSaved.invoke()
-        }?.addOnFailureListener { exception ->
-            FirebaseCrash.report(exception)
+        try {
+            val realm = Realm.getDefaultInstance()
+            if (transactionData.id.isBlank())
+                transactionData.id = "" + transactionData.hashCode()
+            realm.executeTransaction { realm ->
+                realm.insertOrUpdate(transactionData)
+                onSaved.invoke()
+            }
+        } catch (ex: Exception) {
+            FirebaseCrash.report(ex)
             onFailed.invoke()
         }
     }
 
     fun fetchPayees(onFetched: () -> Unit) {
 //        getApplication<MyApplication>().firebaseDb.collection(Constants.DbReferences.TRANSACTIONS).
+    }
+
+    fun setCategory(categoryId: String, categoryName: String) {
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        transactionData.categoryId = categoryId
+        transactionData.categoryName = categoryName
+        realm.commitTransaction()
+    }
+
+    fun updateTransaction(date: Date, description: String, payee: String, amount: Float, isIncome: Boolean,
+                          categoryId: String, categoryName: String, onSaved: () -> Unit,
+                          onFailed: () -> Unit) {
+        Realm.getDefaultInstance().executeTransaction { realm ->
+            try {
+                transactionData.date = date
+                transactionData.description = description
+                transactionData.payee = payee
+                transactionData.amount = amount
+                transactionData.isIncome = isIncome
+                transactionData.categoryId = categoryId
+                transactionData.categoryName = categoryName
+                onSaved.invoke()
+            } catch (ex: Exception) {
+                FirebaseCrash.report(ex)
+                onFailed.invoke()
+            }
+        }
     }
 }
