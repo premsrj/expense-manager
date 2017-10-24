@@ -14,7 +14,8 @@ import com.premsuraj.expensemanager.data.Category
 import io.realm.Realm
 import kotlinx.android.synthetic.main.category_dialog.*
 
-class CategoryDialog(context: Context, val onSave: (name: String, parentId: String) -> Unit) : Dialog(context) {
+class CategoryDialog(context: Context, val category: Category,
+                     val onSave: (name: String, parentId: String) -> Unit) : Dialog(context) {
     lateinit var adapter: ParentAdapter
     var chosenParent = Category("", "...", "")
 
@@ -27,6 +28,8 @@ class CategoryDialog(context: Context, val onSave: (name: String, parentId: Stri
             onSave.invoke(name.text.toString(), chosenParent.id)
         }
 
+        name.setText(category.name)
+
         loadAvailableParents()
     }
 
@@ -37,6 +40,13 @@ class CategoryDialog(context: Context, val onSave: (name: String, parentId: Stri
         parents.add(0, Category("", "...", ""))
         adapter = ParentAdapter(context, parents)
         parent.adapter = adapter
+        var position = 0
+        for (thisCategory in parents) {
+            if (thisCategory.id == category.parentId)
+                break
+            position++
+        }
+        parent.setSelection(if (category.parentId.isBlank()) 0 else position)
         parent.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
             }

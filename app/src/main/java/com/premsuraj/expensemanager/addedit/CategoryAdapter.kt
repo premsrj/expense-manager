@@ -11,7 +11,8 @@ import com.premsuraj.expensemanager.data.Category
 import org.jetbrains.anko.dimen
 
 class CategoryAdapter(private val context: Context, private val entries: List<Category>,
-                      private val onItemClicked: (category: Category) -> Unit)
+                      private val onItemClicked: (category: Category) -> Unit,
+                      private val onItemLongClicked: (category: Category) -> Unit)
     : RecyclerView.Adapter<CategoryViewHolder>() {
 
     override fun onBindViewHolder(holder: CategoryViewHolder?, position: Int) {
@@ -31,8 +32,7 @@ class CategoryAdapter(private val context: Context, private val entries: List<Ca
         view.layoutParams = params
         if (viewType == 1) (view as TextView).setTypeface(view.typeface, Typeface.BOLD)
 
-        val viewHolder = CategoryViewHolder({}, view)
-        viewHolder.onClicked = onItemClicked
+        val viewHolder = CategoryViewHolder(onItemClicked, onItemLongClicked, view)
         return viewHolder
     }
 

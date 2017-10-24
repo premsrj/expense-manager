@@ -42,7 +42,7 @@ class CategoryPicker : AppCompatActivity() {
             val newCategory = Category()
             newCategory.name = ""
             newCategory.id = ""
-            addNewCategory(newCategory)
+            addEditCategory(newCategory)
         }
     }
 
@@ -50,6 +50,8 @@ class CategoryPicker : AppCompatActivity() {
         viewModel.getAllCategories(force, { list ->
             categoryList.adapter = CategoryAdapter(this@CategoryPicker, list, { category ->
                 onCategoryClicked(category)
+            }, { category ->
+                onCategoryLongClicked(category)
             })
             progress.dismiss()
         }, {
@@ -72,8 +74,12 @@ class CategoryPicker : AppCompatActivity() {
         })
     }
 
-    private fun addNewCategory(category: Category) {
-        CategoryDialog(this, { name, parentId ->
+    private fun onCategoryLongClicked(category: Category) {
+        addEditCategory(category)
+    }
+
+    private fun addEditCategory(category: Category) {
+        CategoryDialog(this, category, { name, parentId ->
 
             val progress = indeterminateProgressDialog("Fetching Categories")
             progress.show()
