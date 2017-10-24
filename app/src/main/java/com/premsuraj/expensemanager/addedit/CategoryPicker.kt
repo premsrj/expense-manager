@@ -1,5 +1,6 @@
 package com.premsuraj.expensemanager.addedit
 
+import android.app.ProgressDialog
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
@@ -34,7 +35,19 @@ class CategoryPicker : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(CategoryViewModel::class.java)
 
-        viewModel.getAllCategories({ list ->
+        refreshList(progress)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        newCategory.setOnClickListener {
+            val newCategory = Category()
+            newCategory.name = ""
+            newCategory.id = ""
+            addNewCategory(newCategory)
+        }
+    }
+
+    private fun refreshList(progress: ProgressDialog, force: Boolean = false) {
+        viewModel.getAllCategories(force, { list ->
             categoryList.adapter = CategoryAdapter(this@CategoryPicker, list, { category ->
                 onCategoryClicked(category)
             })
@@ -43,7 +56,6 @@ class CategoryPicker : AppCompatActivity() {
             Snackbar.make(viewContainer, "Failed to fetch categories", Snackbar.LENGTH_LONG).show()
             progress.dismiss()
         })
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     fun onCategoryClicked(category: Category) {
@@ -58,6 +70,17 @@ class CategoryPicker : AppCompatActivity() {
             setResult(101, intent)
             this@CategoryPicker.finish()
         })
+    }
+
+    private fun addNewCategory(category: Category) {
+        CategoryDialog(this, { name, parentId ->
+
+            val progress = indeterminateProgressDialog("Fetching Categories")
+            progress.show()
+            viewModel.saveCategory(category, name, parentId, {
+                refreshList(progress, true)
+            })
+        }).show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

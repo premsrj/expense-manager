@@ -9,8 +9,8 @@ import io.realm.Realm
 class CategoryViewModel constructor(application: Application) : AndroidViewModel(application) {
     var categories = ArrayList<Category>()
 
-    fun getAllCategories(onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
-        if (categories.size != 0) {
+    fun getAllCategories(forced: Boolean = false, onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
+        if (!forced && categories.size != 0) {
             onFetched.invoke(categories)
             return
         }
@@ -26,6 +26,7 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
 
     private fun processData(result: List<Category>, onFetched: (List<Category>) -> Unit, onFailed: () -> Unit) {
         try {
+            categories.clear()
             val parentCategories = ArrayList<Category>()
             val childCategories = ArrayList<Category>()
 
@@ -64,6 +65,16 @@ class CategoryViewModel constructor(application: Application) : AndroidViewModel
         } catch (ex: Exception) {
             FirebaseCrash.report(ex)
             onFetched.invoke(category.name)
+        }
+    }
+
+    fun saveCategory(category: Category, name: String, parentId: String, onSaved: () -> Unit) {
+        Realm.getDefaultInstance().executeTransaction { realm ->
+            category.name = name
+            category.parentId = parentId
+            if (category.id.isBlank()) category.id = "" + category.hashCode()
+            realm.insertOrUpdate(category)
+            onSaved.invoke()
         }
     }
 }
