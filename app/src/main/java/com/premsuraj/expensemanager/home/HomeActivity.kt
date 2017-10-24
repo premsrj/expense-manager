@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.premsuraj.expensemanager.R
+import com.premsuraj.expensemanager.accounts.AccountsActivity
 import com.premsuraj.expensemanager.addedit.AddEditActivity
 import com.premsuraj.expensemanager.base.BaseActivity
+import com.premsuraj.expensemanager.data.Account
+import io.realm.Realm
 import kotlinx.android.synthetic.main.app_bar_home.*
 
 class HomeActivity : BaseActivity() {
@@ -22,6 +25,14 @@ class HomeActivity : BaseActivity() {
             startActivity(intent)
         }
         super.initBaseViews()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (getAllAccounts().isEmpty()) {
+            val intent = Intent(this, AccountsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,5 +52,9 @@ class HomeActivity : BaseActivity() {
             true
         } else super.onOptionsItemSelected(item)
 
+    }
+
+    fun getAllAccounts(): List<Account> {
+        return Realm.getDefaultInstance().where(Account::class.java).findAll()
     }
 }
